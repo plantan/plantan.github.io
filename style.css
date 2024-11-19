@@ -1,0 +1,44 @@
+body {      
+    font-family: 'Arial', sans-serif;
+    background-color: #282c35;
+    color: #fff; /* Light text color */
+}
+
+select {
+    background-color: #282c35;
+    border: 1px solid yellow;
+    color: #fff; /* Light text color */
+    padding: 8px;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+}
+
+th, td {
+    padding: 8px;
+}
+
+th {
+    background-color: #1a1e24;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+td {
+    font-size: 14px;
+}
+
+tr:nth-child(even) {
+    background-color: #32383f;
+}
+
+table {
+    display: inline-block;
+    white-space: nowrap;
+    border: none;
+}
