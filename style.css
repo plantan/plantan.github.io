@@ -6,17 +6,29 @@ body {
 
 select {
     background-color: #282c35;
-    border: 1px solid yellow;
+    border: 1px solid rgb(86, 86, 86);
     color: #fff; /* Light text color */
     padding: 8px;
     margin-bottom: 20px;
 }
 
+button {
+    border-color: cadetblue;
+    background-color: #202429;
+    color: antiquewhite;
+    width: 100%;
+    font-size: 24px;
+}
+
+button:hover {
+    background-color: #2a2f36;
+}
+
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-    text-size-adjust: none;
-    -webkit-text-size-adjust: none;
+    /* text-size-adjust: none; */
+    /* -webkit-text-size-adjust: none; */
 }
 
 th, td {
@@ -38,7 +50,16 @@ tr:nth-child(even) {
 }
 
 table {
-    display: inline-block;
-    white-space: nowrap;
+    display: block;
     border: none;
+    border-collapse: collapse;
+    width: max-content;
+    overflow: hidden;
+    height: 0px;
+    opacity: 0;
+    transition: height 0.25s ease, opacity 0.25s ease;
+}
+
+table.expanded {
+    opacity: 1;
 }

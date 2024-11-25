@@ -11,31 +11,39 @@ function viewModeChanged(viewMode)
 
 function parsedCSV(parsedCSV, viewMode)
 {
-    let html = "";
+    let content = { html: "", buttonIds: [], tableIds: [] };
     switch(viewMode)
     {
         case "platform":
-            html = renderPerPlatform(parsedCSV);
+            content = renderPerPlatform(parsedCSV);
             break;
         case "year":
-            html = renderPerYear(parsedCSV);
+            content = renderPerYear(parsedCSV);
             break;
         default:
-            html = renderPerPlatform(parsedCSV);
+            content = renderPerPlatform(parsedCSV);
     }
-
-    document.getElementById("content").innerHTML = html;
+    
+    document.getElementById("content").innerHTML = content.html;
+    for (const [index, buttonId] of content.buttonIds.entries())
+    {
+        const tableId = content.tableIds[index];
+        const table = document.getElementById(tableId);
+        const button = document.getElementById(buttonId);
+        button.addEventListener('click', () =>
+        {
+            table.style.height = table.classList.contains('expanded') ? "0px" : getTableRowsHeight(table);
+            table.classList.toggle('expanded');
+        });
+    }
 }
 
-function renderPerPlatform(parsedCSV)
+function renderPerPlatform(parsedCSV, outButtonIds)
 {
-    let html = "<table>";
-
     // shift() removes and returns the first element in an array
     let headers = parsedCSV.data.shift();
     headers.pop(); // Remove the platform column
-    html += addRow(headers, true);
-    
+
     let gamesPerPlatform = new Map();
     for(let row of parsedCSV.data)
     {
@@ -49,10 +57,32 @@ function renderPerPlatform(parsedCSV)
         }
 
         gamesForPlatform.push(row);
-        html += addRow(row, false);
-    }  
+    }
+
+    let html = "";
+    const buttonIds = [];
+    const tableIds = [];
+    gamesPerPlatform.forEach((games, platform) =>
+    {
+        const buttonId = `button_${platform}`;
+        buttonIds.push(buttonId);
+        
+        const tableId = `table_${platform}`;
+        tableIds.push(tableId);
+
+        html += `<button id="${buttonId}">${platform}</button><br><table id="${tableId}">`;
+        html += addRow(headers, true);
     
-    return html + "</table>";
+        games.sort(compareDates);
+        for(const game of games)
+        {
+            html += addRow(game, false);
+        }
+    
+        html += "</table><br>";
+    });
+
+    return { html, buttonIds, tableIds };
 }
 
 function renderPerYear(csv)
@@ -72,6 +102,18 @@ function addRow(row, isHeader)
     
     return htmlRow + "</tr>"
 }
+
+function getTableRowsHeight(table)
+{
+    const rows = table.querySelectorAll('tbody tr'); // Get all <tr> elements in the <tbody>
+    let totalHeight = 0;
+
+    rows.forEach(row => {
+      totalHeight += row.getBoundingClientRect().height; // Get the rendered height of each row
+    });
+
+    return `${totalHeight + 1}px`; // Add a single pixel for border width...
+  }
 
 function compareDates(a, b)
 {
