@@ -73,7 +73,7 @@ function renderPerPlatform(parsedCSV, outButtonIds)
         const tableId = `table_${platform}`;
         tableIds.push(tableId);
 
-        html += `<button id="${buttonId}">${platform}</button><br><table id="${tableId}">`;
+        html += `<button id="${buttonId}">${platform} : ${games.length}</button><br><table id="${tableId}">`;
         html += addRow(headers, true);
     
         games.sort(compareDates);
@@ -124,7 +124,7 @@ function renderPerYear(parsedCSV, outButtonIds)
             const tableId = `table_${year}`;
             tableIds.push(tableId);
     
-            html += `<button id="${buttonId}">${year}</button><br><table id="${tableId}">`;
+            html += `<button id="${buttonId}">${year} : ${games.length}</button><br><table id="${tableId}">`;
             html += addRow(headers, true);
         
             for(const game of games)
