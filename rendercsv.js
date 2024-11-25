@@ -49,21 +49,24 @@ function renderPerPlatform(parsedCSV, outButtonIds)
     {
         let platform = row.pop();
 
-        let gamesForPlatform = gamesPerPlatform.get(platform);
-        if(gamesForPlatform === undefined)
+        let games = gamesPerPlatform.get(platform);
+        if(games === undefined)
         {
-            gamesForPlatform = [];
-            gamesPerPlatform.set(platform, gamesForPlatform);
+            games = [];
+            gamesPerPlatform.set(platform, games);
         }
 
-        gamesForPlatform.push(row);
+        games.push(row);
     }
 
     let html = "";
     const buttonIds = [];
     const tableIds = [];
-    gamesPerPlatform.forEach((games, platform) =>
+
+    const sortedPlatforms = [...gamesPerPlatform.keys()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    for (const platform of sortedPlatforms)
     {
+        const games = gamesPerPlatform.get(platform)
         const buttonId = `button_${platform}`;
         buttonIds.push(buttonId);
         
@@ -80,14 +83,59 @@ function renderPerPlatform(parsedCSV, outButtonIds)
         }
     
         html += "</table><br>";
-    });
+    }
 
     return { html, buttonIds, tableIds };
 }
 
-function renderPerYear(csv)
+function renderPerYear(parsedCSV, outButtonIds)
 {
-    return "";
+        // shift() removes and returns the first element in an array
+        let headers = parsedCSV.data.shift();
+        parsedCSV.data.sort(compareDates);
+    
+        let gamesPerYear = new Map();
+        for(let row of parsedCSV.data)
+        {
+            let year = row[1].split('-')[0];
+            if(year.length === 0)
+            {
+                year = "No Year Specified";
+            }
+            
+            let gamesForYear = gamesPerYear.get(year);
+            if(gamesForYear === undefined)
+            {
+                gamesForYear = [];
+                gamesPerYear.set(year, gamesForYear);
+            }
+    
+            gamesForYear.push(row);
+        }
+    
+        let html = "";
+        const buttonIds = [];
+        const tableIds = [];
+        gamesPerYear.forEach((games, year) =>
+        {
+            const buttonId = `button_${year}`;
+            buttonIds.push(buttonId);
+            
+            const tableId = `table_${year}`;
+            tableIds.push(tableId);
+    
+            html += `<button id="${buttonId}">${year}</button><br><table id="${tableId}">`;
+            html += addRow(headers, true);
+        
+            for(const game of games)
+            {
+                html += addRow(game, false);
+            }
+        
+            html += "</table><br>";
+        });
+    
+        return { html, buttonIds, tableIds };
 }
 
 function addRow(row, isHeader)
